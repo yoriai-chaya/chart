@@ -1,0 +1,5 @@
+issueID,createdAt,createdBy,title,category,projectName,status,description,resolutionStatus,completedAt
+CR-202604-001,20260401,Tanaka,ログイン画面で認証エラー発生,障害,PKG,調査中,特定ユーザーでログイン時に500エラーが発生,再現手順を整理しAPIログを確認中,
+CR-202604-002,20260402,Suzuki,帳票CSVの列順変更要望,顧客要望,SKB,新規/未着手,顧客より売上CSVの列順を変更したい要望,要件確認待ち,
+CR-202604-003,20260403,Sato,バッチ処理時間短縮の改善案,改善,MJR,修正中/対応中,夜間バッチのSQL性能改善,インデックス追加とSQL見直しを実施中,
+CR-202604-004,20260404,John,試験仕様書レビュー残件,残作業,SMT,保留,結合試験仕様書の未レビュー項目が残存,レビュー担当者のスケジュール待ち,
