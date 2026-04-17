@@ -1,4 +1,4 @@
-issueID,createdAt,createdBy,title,category,projectName,status,description,resolutionStatus,completedAt
+issueID,createdAt,createdBy,title,category,team,status,description,resolutionStatus,completedAt
 CR-202604-001,20260401,Tanaka,ログイン画面で認証エラー発生,障害,PKG,完了,特定ユーザーでログイン時に500エラーが発生,本番反映後の正常性確認完了,20260422
 CR-202604-002,20260402,Suzuki,帳票CSVの列順変更要望,顧客要望,SKB,完了,顧客より売上CSVの列順を変更したい要望,対応完了,20260416
 CR-202604-003,20260403,Sato,バッチ処理時間短縮の改善案,改善,MJR,完了,夜間バッチのSQL性能改善,対応完了,20260409

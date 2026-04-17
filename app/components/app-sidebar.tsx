@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { CircleAlert, LayoutDashboard, LucideIcon } from "lucide-react";
+import { Table, LayoutDashboard, LucideIcon } from "lucide-react";
 
 import {
   Sidebar,
@@ -31,9 +31,9 @@ const menuItems: MenuItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Issues",
-    url: "/issues",
-    icon: CircleAlert,
+    title: "Table",
+    url: "/table",
+    icon: Table,
   },
 ];
 

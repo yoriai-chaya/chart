@@ -4,12 +4,12 @@ import { IssuesLineChart } from "./components/line-chart";
 
 const DashboardPage = () => {
   return (
-    <div className="">
-      <div className="grid grid-cols-1 sm:grid-cols-3">
-        <div className="mx-auto w-full max-w-80 sm:col-span-1">
+    <div className="p-4 space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+        <div className="flex h-full mx-auto w-full sm:col-span-1">
           <DonutChart />
         </div>
-        <div className="sm:col-span-2">
+        <div className="sm:col-span-1">
           <Summary />
         </div>
       </div>
@@ -18,4 +18,3 @@ const DashboardPage = () => {
   );
 };
 export default DashboardPage;
-

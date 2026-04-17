@@ -9,7 +9,7 @@ type IssueRow = {
   createdBy: string;
   title: string;
   category: string;
-  projectName: string;
+  team: string;
   status: string;
   description: string;
   resolutionStatus: string;
@@ -49,7 +49,7 @@ export async function GET() {
     const projectCounts: Record<string, number> = {};
 
     rows.forEach((row) => {
-      const project = row["projectName"] || "未設定";
+      const project = row["team"] || "not-set";
       projectCounts[project] = (projectCounts[project] ?? 0) + 1;
     });
 

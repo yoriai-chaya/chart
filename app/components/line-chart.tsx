@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+import { STATUS_LABEL, STATUS_COLOR_MAP, UI_LABEL } from "../app-config";
 
 type WeeklyIssueSummary = {
   date: string;
@@ -42,14 +43,15 @@ export const IssuesLineChart = () => {
   }, []);
 
   return (
-    <Card className="bg-surface text-foreground">
+    <Card className="bg-surface text-foreground card-base">
       <CardHeader>
-        <CardTitle>Weekly Issue Trend</CardTitle>
+        <CardTitle>{UI_LABEL.line_chart.title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-60 rounded-xl">
           <ChartContainer config={chartConfig} className="h-full w-full">
             <LineChart
+              accessibilityLayer
               data={chartData}
               margin={{ top: 20, right: 40, left: 10, bottom: 10 }}
             >
@@ -57,34 +59,75 @@ export const IssuesLineChart = () => {
               <XAxis dataKey="date" />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Legend layout="vertical" verticalAlign="middle" align="right" />
+              <Legend
+                layout="vertical"
+                verticalAlign="middle"
+                align="right"
+                iconType="none"
+                wrapperStyle={{
+                  lineHeight: "6px",
+                  paddingLeft: 20,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+                formatter={(value: string, entry: { color?: string }) => {
+                  return (
+                    <span
+                      style={{ display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      <span
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: "50%",
+                          backgroundColor: entry.color,
+                          display: "inline-block",
+                        }}
+                      />
+                      {value}
+                    </span>
+                  );
+                }}
+              />
               <Line
-                type="monotone"
+                type="natural"
                 dataKey="total"
-                name="総数"
-                stroke="var(--chart-1)"
+                name={STATUS_LABEL.total}
+                stroke={STATUS_COLOR_MAP.total}
                 strokeWidth={2}
+                dot={{
+                  fill: "var(--status-total)",
+                }}
               />
               <Line
                 type="monotone"
                 dataKey="newIssue"
-                name="新規/未着手"
-                stroke="var(--chart-2)"
+                name={STATUS_LABEL.new}
+                stroke={STATUS_COLOR_MAP.new}
                 strokeWidth={2}
+                dot={{
+                  fill: "var(--status-new)",
+                }}
               />
               <Line
                 type="monotone"
                 dataKey="inProgress"
-                name="未完了"
-                stroke="var(--chart-3)"
+                name={STATUS_LABEL.incomplete}
+                stroke={STATUS_COLOR_MAP.incomplete}
                 strokeWidth={2}
+                dot={{
+                  fill: "var(--status-incomplete)",
+                }}
               />
               <Line
                 type="monotone"
                 dataKey="completed"
-                name="完了"
-                stroke="var(--chart-4)"
+                name={STATUS_LABEL.completed}
+                stroke={STATUS_COLOR_MAP.completed}
                 strokeWidth={2}
+                dot={{
+                  fill: "var(--status-completed)",
+                }}
               />
             </LineChart>
           </ChartContainer>

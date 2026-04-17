@@ -11,6 +11,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+import { TEAM_COLOR_MAP, UI_LABEL } from "../app-config";
+
 type ApiResponse = {
   fileName: string;
   totalCount: number;
@@ -23,15 +25,6 @@ type ChartRow = {
   fill: string;
 };
 
-const chartColors = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-  "var(--chart-6)",
-];
-
 export const DonutChart = () => {
   const [chartData, setChartData] = useState<ChartRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -42,10 +35,12 @@ export const DonutChart = () => {
       const data: ApiResponse = await res.json();
       console.log("API response:", data);
       const transformed = Object.entries(data.projectCounts).map(
-        ([name, value], index) => ({
+        ([name, value]) => ({
           name,
           value,
-          fill: chartColors[index % chartColors.length],
+          fill:
+            TEAM_COLOR_MAP[name as keyof typeof TEAM_COLOR_MAP] ??
+            "var(--muted)",
         }),
       );
       console.log("transformed: ", transformed);
@@ -66,13 +61,13 @@ export const DonutChart = () => {
   );
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full card-base">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Issues</CardTitle>
+        <CardTitle>{UI_LABEL.donut_chart.issueTitle}</CardTitle>
       </CardHeader>
 
       <CardContent>
-        <div className="relative mx-auto h-30 w-full">
+        <div className="relative mx-auto h-45 w-full">
           <ChartContainer config={chartConfig} className="h-full w-full">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent />} />
@@ -82,8 +77,8 @@ export const DonutChart = () => {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius={30}
-                outerRadius={50}
+                innerRadius={50}
+                outerRadius={90}
                 strokeWidth={1}
               />
               <ChartLegend
@@ -102,10 +97,12 @@ export const DonutChart = () => {
 
           {/* absolute overlay */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center -translate-x-5">
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-4xl font-bold text-foreground">
               {totalCount}
             </div>
-            <div className="text-xs text-muted-foreground">Issues</div>
+            <div className="text-xs text-muted-foreground">
+              {UI_LABEL.donut_chart.issueUnit}
+            </div>
           </div>
         </div>
       </CardContent>

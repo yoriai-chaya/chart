@@ -1,0 +1,91 @@
+@theme inline {
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --color-chart-9: var(--chart-9);
+  --color-chart-10: var(--chart-10);
+
+  --color-table-header-bg: var(--table-header-bg);
+  --color-table-completed-bg: var(--table-completed-bg);
+}
+
+:root {
+  --chart-1: hsl(221 83% 53%); /* vivid royal blue */
+  --chart-2: hsl(162 63% 41%); /* fresh emerald green */
+  --chart-3: hsl(43 96% 56%); /* bright amber yellow */
+  --chart-4: hsl(27 96% 61%); /* vibrant orange */
+  --chart-5: hsl(346 77% 49%); /* strong crimson red */
+  --chart-6: hsl(262 83% 58%); /* rich violet purple */
+  --chart-7: hsl(32 45% 45%); /* warm chestnut brown */
+  --chart-8: hsl(210 10% 50%); /* balanced slate gray */
+  --chart-9: hsl(190 45% 45%); /* calm teal blue */
+  --chart-10: hsl(120 25% 45%); /* earthy moss green */
+
+  --table-header-bg: oklch(0.96 0 0); /* soft light gray */
+  --table-completed-bg: oklch(0.9 0 0); /* subtle completed row gray */
+
+  /* status (individual) */
+  --status-completed: hsl(162 63% 41%); /* success green - completed */
+  --status-new: hsl(221 83% 53%); /* informational blue - new */
+  --status-in-progress: hsl(27 96% 61%); /* active orange - in progress */
+  --status-investigating: hsl(43 96% 56%); /* attention amber - investigating */
+  --status-on-hold: hsl(210 10% 50%); /* neutral gray - on hold */
+  --status-researching: hsl(
+    43 96% 56%
+  ); /* investigation yellow - researching */
+
+  /* aggregated */
+  --status-incomplete: hsl(43 96% 56%); /* aggregated amber - incomplete */
+
+  /* meta */
+  --status-total: hsl(0 0% 20%); /* baseline black - total reference */
+
+  /* shadow */
+  --card-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dark {
+  --chart-1: hsl(221 83% 53%);
+  --chart-2: hsl(162 63% 41%);
+  --chart-3: hsl(43 96% 56%);
+  --chart-4: hsl(27 96% 61%);
+  --chart-5: hsl(346 77% 49%);
+  --chart-6: hsl(262 83% 58%);
+  --chart-7: hsl(32 45% 45%);
+  --chart-8: hsl(210 10% 50%);
+  --chart-9: hsl(190 45% 45%);
+  --chart-10: hsl(120 25% 45%);
+
+  --table-header-bg: oklch(0.24 0 0); /* deep charcoal gray */
+  --table-completed-bg: oklch(0.32 0 0); /* muted dark gray */
+
+  /* status (individual) */
+  --status-completed: hsl(
+    162 55% 55%
+  ); /* brighter green - completed (dark mode visibility) */
+  --status-new: hsl(221 83% 65%); /* lighter blue - new (dark mode contrast) */
+  --status-in-progress: hsl(27 96% 70%); /* softer orange - in progress */
+  --status-investigating: hsl(43 96% 65%); /* brighter amber - investigating */
+  --status-on-hold: hsl(210 10% 65%); /* lighter gray - on hold */
+  --status-researching: hsl(43 96% 65%); /* brighter yellow - researching */
+
+  /* aggregated */
+  --status-incomplete: hsl(43 96% 65%); /* brighter amber - incomplete */
+
+  /* meta */
+  --status-total: hsl(
+    0 0% 80%
+  ); /* light gray - total reference (dark mode baseline) */
+
+  /* shadow */
+  --card-shadow: 0 6px 24px rgba(255, 255, 255, 0.3);
+}
+
+.card-base {
+  @apply shadow-(--card-shadow);
+}
