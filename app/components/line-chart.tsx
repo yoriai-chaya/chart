@@ -13,18 +13,19 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import { STATUS_LABEL, STATUS_COLOR_MAP, UI_LABEL } from "../app-config";
+import { useTeamFilterQuery } from "../useTeamFilterQuery";
 
 type WeeklyIssueSummary = {
   date: string;
   total: number;
-  newIssue: number;
-  inProgress: number;
+  new: number;
+  incomplete: number;
   completed: number;
 };
 
 const chartConfig = {
   total: {
-    label: "総数",
+    label: STATUS_LABEL.total,
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
@@ -32,15 +33,17 @@ const chartConfig = {
 export const IssuesLineChart = () => {
   const [chartData, setChartData] = useState<WeeklyIssueSummary[]>([]);
 
+  const query = useTeamFilterQuery();
+
   useEffect(() => {
     const fetchWeeklyIssues = async () => {
-      const res = await fetch("/api/issues/weekly");
+      const res = await fetch(`/api/issues/weekly${query}`);
       const data: WeeklyIssueSummary[] = await res.json();
       setChartData(data);
     };
 
     fetchWeeklyIssues();
-  }, []);
+  }, [query]);
 
   return (
     <Card className="bg-surface text-foreground card-base">
@@ -101,7 +104,7 @@ export const IssuesLineChart = () => {
               />
               <Line
                 type="monotone"
-                dataKey="newIssue"
+                dataKey="new"
                 name={STATUS_LABEL.new}
                 stroke={STATUS_COLOR_MAP.new}
                 strokeWidth={2}
@@ -111,7 +114,7 @@ export const IssuesLineChart = () => {
               />
               <Line
                 type="monotone"
-                dataKey="inProgress"
+                dataKey="incomplete"
                 name={STATUS_LABEL.incomplete}
                 stroke={STATUS_COLOR_MAP.incomplete}
                 strokeWidth={2}

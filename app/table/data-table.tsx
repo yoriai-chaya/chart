@@ -1,6 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
-
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -11,6 +10,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { STATUS_FROM_CSV, STATUS_KEYS, COLUMN_LABEL } from "../app-config";
+import type { IssueKey } from "../app-config";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,13 +21,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import {
   Table,
@@ -36,6 +30,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import { Columns3Cog } from "lucide-react";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -60,9 +63,6 @@ export function DataTable<
     resolutionStatus: false,
     completedAt: false,
   });
-  const teams = useMemo(() => {
-    return Array.from(new Set(data.map((item) => item.team))).sort();
-  }, [data]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -80,30 +80,8 @@ export function DataTable<
   });
 
   return (
-    <div className="">
-      {/* Filters */}
-      <div className="flex items-center gap-4">
-        {/* Team Filter */}
-        <Select
-          onValueChange={(value) =>
-            table
-              .getColumn("team")
-              ?.setFilterValue(value === "ALL" ? "" : value)
-          }
-        >
-          <SelectTrigger className="w-55">
-            <SelectValue placeholder="Filter by Team" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All Teams</SelectItem>
-            {teams.map((team) => (
-              <SelectItem key={team} value={team}>
-                {team}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
         {/* Title Search */}
         <Input
           placeholder="Search by title..."
@@ -116,14 +94,26 @@ export function DataTable<
 
         {/* Column Visibility */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">Columns</Button>
-          </DropdownMenuTrigger>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    <Columns3Cog />
+                  </Button>
+                </DropdownMenuTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Select columns</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
               .map((column) => {
+                const label = COLUMN_LABEL[column.id as IssueKey] ?? column.id;
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -132,7 +122,7 @@ export function DataTable<
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {label}
                   </DropdownMenuCheckboxItem>
                 );
               })}
@@ -141,8 +131,8 @@ export function DataTable<
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-xl border p-4 card-base">
+        <Table className="overflow-x-auto">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-table-header-bg">
@@ -163,7 +153,7 @@ export function DataTable<
               <TableRow
                 key={row.id}
                 className={
-                  row.original.status === "完了"
+                  STATUS_FROM_CSV[row.original.status] === STATUS_KEYS.COMPLETED
                     ? "bg-table-completed-bg text-muted-foreground"
                     : ""
                 }
@@ -180,7 +170,7 @@ export function DataTable<
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-end space-x-2">
+      <div className="flex items-center justify-end gap-2">
         <Button
           variant="outline"
           size="sm"

@@ -15,16 +15,16 @@
 }
 
 :root {
-  --chart-1: hsl(221 83% 53%); /* vivid royal blue */
-  --chart-2: hsl(162 63% 41%); /* fresh emerald green */
-  --chart-3: hsl(43 96% 56%); /* bright amber yellow */
-  --chart-4: hsl(27 96% 61%); /* vibrant orange */
-  --chart-5: hsl(346 77% 49%); /* strong crimson red */
-  --chart-6: hsl(262 83% 58%); /* rich violet purple */
-  --chart-7: hsl(32 45% 45%); /* warm chestnut brown */
-  --chart-8: hsl(210 10% 50%); /* balanced slate gray */
-  --chart-9: hsl(190 45% 45%); /* calm teal blue */
-  --chart-10: hsl(120 25% 45%); /* earthy moss green */
+  --chart-1: hsl(207 83% 53%); /* 🫐 Blueberry - vivid berry blue */
+  --chart-2: hsl(162 63% 41%); /* 🍏 Green Apple - fresh apple green */
+  --chart-3: hsl(43 96% 56%);  /* 🍋 Lemon - bright citrus yellow */
+  --chart-4: hsl(27 96% 61%);  /* 🍊 Orange - vibrant orange peel */
+  --chart-5: hsl(346 77% 49%); /* 🍓 Strawberry - rich berry red */
+  --chart-6: hsl(262 83% 58%); /* 🍇 Grapes - juicy purple violet */
+  --chart-7: hsl(32 45% 45%);  /* 🌰 Chestnut - warm nut brown */
+  --chart-8: hsl(340 70% 70%); /* 🍑 Peach - soft peach pink */
+  --chart-9: hsl(190 45% 45%); /* 🥝 Kiwi - cool kiwi teal */
+  --chart-10: hsl(120 25% 45%);/* 🫒 Olive - earthy olive green */
 
   --table-header-bg: oklch(0.96 0 0); /* soft light gray */
   --table-completed-bg: oklch(0.9 0 0); /* subtle completed row gray */
@@ -50,16 +50,16 @@
 }
 
 .dark {
-  --chart-1: hsl(221 83% 53%);
-  --chart-2: hsl(162 63% 41%);
-  --chart-3: hsl(43 96% 56%);
-  --chart-4: hsl(27 96% 61%);
-  --chart-5: hsl(346 77% 49%);
-  --chart-6: hsl(262 83% 58%);
-  --chart-7: hsl(32 45% 45%);
-  --chart-8: hsl(210 10% 50%);
-  --chart-9: hsl(190 45% 45%);
-  --chart-10: hsl(120 25% 45%);
+  --chart-1: hsl(207 83% 53%); /* 🫐 Blueberry - vivid berry blue */
+  --chart-2: hsl(162 63% 41%); /* 🍏 Green Apple - fresh apple green */
+  --chart-3: hsl(43 96% 56%);  /* 🍋 Lemon - bright citrus yellow */
+  --chart-4: hsl(27 96% 61%);  /* 🍊 Orange - vibrant orange peel */
+  --chart-5: hsl(346 77% 49%); /* 🍓 Strawberry - rich berry red */
+  --chart-6: hsl(262 83% 58%); /* 🍇 Grapes - juicy purple violet */
+  --chart-7: hsl(32 45% 45%);  /* 🌰 Chestnut - warm nut brown */
+  --chart-8: hsl(340 70% 70%); /* 🍑 Peach - soft peach pink */
+  --chart-9: hsl(190 45% 45%); /* 🥝 Kiwi - cool kiwi teal */
+  --chart-10: hsl(120 25% 45%);/* 🫒 Olive - earthy olive green */
 
   --table-header-bg: oklch(0.24 0 0); /* deep charcoal gray */
   --table-completed-bg: oklch(0.32 0 0); /* muted dark gray */

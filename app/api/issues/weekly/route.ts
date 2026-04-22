@@ -3,13 +3,15 @@ import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
 
+import { csvToStatusKey, summarizeStatuses } from "@/app/status";
+
 type IssueRow = {
   issueID: string;
   createdAt: string;
   createdBy: string;
   title: string;
   category: string;
-  projectName: string;
+  team: string;
   status: string;
   description: string;
   resolutionStatus: string;
@@ -19,20 +21,18 @@ type IssueRow = {
 type WeeklyIssueSummary = {
   date: string;
   total: number;
-  newIssue: number;
-  inProgress: number;
+  new: number;
+  incomplete: number;
   completed: number;
 };
 
-const IN_PROGRESS_STATUSES = new Set([
-  "調査中",
-  "保留",
-  "修正中/対応中",
-  "確認中/検証中",
-]);
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const teamsParam = searchParams.get("teams");
+
+    const selectedTeams = teamsParam ? teamsParam.split(",") : [];
+
     const csvDir = path.join(process.cwd(), "public", "csv");
     const files = await fs.readdir(csvDir);
 
@@ -51,30 +51,25 @@ export async function GET() {
 
       const rows = parsed.data;
 
-      let newIssue = 0;
-      let inProgress = 0;
-      let completed = 0;
+      const filteredRows =
+        selectedTeams.length === 0
+          ? rows
+          : rows.filter((row) => selectedTeams.includes(row.team));
 
-      rows.forEach((row) => {
-        const status = row.status?.trim();
+      const statusKeys = filteredRows
+        .map((row) => csvToStatusKey(row.status?.trim() ?? ""))
+        .filter((s): s is NonNullable<typeof s> => s !== null);
 
-        if (status === "新規/未着手") {
-          newIssue++;
-        } else if (IN_PROGRESS_STATUSES.has(status)) {
-          inProgress++;
-        } else if (status === "完了") {
-          completed++;
-        }
-      });
+      const summary = summarizeStatuses(statusKeys);
 
-      const date = `${file.slice(0, 4)}/${file.slice(4, 6)}/${file.slice(6, 8)}`;
+      const date = `${file.slice(0, 4)}/${file.slice(4, 6)}/${file.slice(
+        6,
+        8,
+      )}`;
 
       result.push({
         date,
-        total: rows.length,
-        newIssue,
-        inProgress,
-        completed,
+        ...summary,
       });
     }
 

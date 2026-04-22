@@ -1,20 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { Issue } from "./types";
+import { useTeamFilterQuery } from "../useTeamFilterQuery";
 
-async function getIssues(): Promise<Issue[]> {
-  const res = await fetch("http://localhost:3000/api/issue-list", {
-    cache: "no-store",
-  });
+export default function TablePage() {
+  const [data, setData] = useState<Issue[]>([]);
+  const query = useTeamFilterQuery();
 
-  return res.json();
-}
-
-export default async function TablePage() {
-  const data = await getIssues();
+  useEffect(() => {
+    const fetchIssues = async () => {
+      const res = await fetch(`/api/issue-list${query}`);
+      const json = await res.json();
+      setData(json);
+    };
+    fetchIssues();
+  }, [query]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto p-4">
       <DataTable columns={columns} data={data} />
     </div>
   );

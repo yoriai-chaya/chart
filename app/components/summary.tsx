@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { STATUS_LABEL, UI_LABEL } from "@/app/app-config";
+import { useTeamFilterQuery } from "../useTeamFilterQuery";
 
 type SummaryResponse = {
   current: {
@@ -62,7 +63,11 @@ const Row = ({ label, value, diff }: SummaryRowProps) => (
 );
 
 export const Summary = () => {
-  const { data, isLoading } = useSWR<SummaryResponse>("/api/summary", fetcher);
+  const query = useTeamFilterQuery();
+  const { data, isLoading } = useSWR<SummaryResponse>(
+    `/api/summary${query}`,
+    fetcher,
+  );
 
   if (isLoading || !data) return <div>Loading...</div>;
 

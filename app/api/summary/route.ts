@@ -6,6 +6,7 @@ import { STATUS_FROM_CSV, STATUS_GROUP } from "@/app/app-config";
 
 type Issue = {
   status: string;
+  team: string;
 };
 
 const CSV_DIR = path.join(process.cwd(), "public/csv");
@@ -35,17 +36,22 @@ function parseCSV(fileName: string): Issue[] {
   return result.data;
 }
 
-function summarize(data: Issue[]) {
+function summarize(data: Issue[], selectedTeams: string[]) {
+  const filtered =
+    selectedTeams.length === 0
+      ? data
+      : data.filter((row) => selectedTeams.includes(row.team));
+
   const counts: Record<string, number> = {};
 
-  data.forEach((row) => {
+  filtered.forEach((row) => {
     const key = STATUS_FROM_CSV[row.status];
     if (!key) return;
 
     counts[key] = (counts[key] || 0) + 1;
   });
 
-  const total = data.length;
+  const total = filtered.length;
 
   const incomplete = STATUS_GROUP.INCOMPLETE.reduce(
     (sum, key) => sum + (counts[key] || 0),
@@ -66,47 +72,61 @@ function summarize(data: Issue[]) {
   };
 }
 
-export async function GET() {
-  const { current, previous } = getLatestTwoFiles();
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const teamsParam = searchParams.get("teams");
 
-  const currentData = parseCSV(current);
-  const previousData = parseCSV(previous);
+    const selectedTeams = teamsParam ? teamsParam.split(",") : [];
 
-  const currentSummary = summarize(currentData);
-  const previousSummary = summarize(previousData);
+    const { current, previous } = getLatestTwoFiles();
 
-  const diff = (a: number, b: number) => a - b;
+    const currentData = parseCSV(current);
+    const previousData = parseCSV(previous);
 
-  return NextResponse.json({
-    currentDate: current.replace(".csv", ""),
-    previousDate: previous.replace(".csv", ""),
+    const currentSummary = summarize(currentData, selectedTeams);
+    const previousSummary = summarize(previousData, selectedTeams);
 
-    current: currentSummary,
-    previous: previousSummary,
+    const diff = (a: number, b: number) => a - b;
 
-    diff: {
-      total: diff(currentSummary.total, previousSummary.total),
-      completed: diff(currentSummary.completed, previousSummary.completed),
-      new: diff(currentSummary.new, previousSummary.new),
-      incomplete: diff(currentSummary.incomplete, previousSummary.incomplete),
-      breakdown: {
-        in_progress: diff(
-          currentSummary.breakdown.in_progress,
-          previousSummary.breakdown.in_progress,
-        ),
-        investigating: diff(
-          currentSummary.breakdown.investigating,
-          previousSummary.breakdown.investigating,
-        ),
-        researching: diff(
-          currentSummary.breakdown.researching,
-          previousSummary.breakdown.researching,
-        ),
-        on_hold: diff(
-          currentSummary.breakdown.on_hold,
-          previousSummary.breakdown.on_hold,
-        ),
+    return NextResponse.json({
+      currentDate: current.replace(".csv", ""),
+      previousDate: previous.replace(".csv", ""),
+
+      current: currentSummary,
+      previous: previousSummary,
+
+      diff: {
+        total: diff(currentSummary.total, previousSummary.total),
+        completed: diff(currentSummary.completed, previousSummary.completed),
+        new: diff(currentSummary.new, previousSummary.new),
+        incomplete: diff(currentSummary.incomplete, previousSummary.incomplete),
+        breakdown: {
+          in_progress: diff(
+            currentSummary.breakdown.in_progress,
+            previousSummary.breakdown.in_progress,
+          ),
+          investigating: diff(
+            currentSummary.breakdown.investigating,
+            previousSummary.breakdown.investigating,
+          ),
+          researching: diff(
+            currentSummary.breakdown.researching,
+            previousSummary.breakdown.researching,
+          ),
+          on_hold: diff(
+            currentSummary.breakdown.on_hold,
+            previousSummary.breakdown.on_hold,
+          ),
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
 }

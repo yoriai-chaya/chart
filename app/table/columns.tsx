@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Issue } from "./types";
+import { COLUMN_LABEL } from "../app-config";
 
 const longTextCell = (value: string) => (
   <div className="max-h-24 max-w-md overflow-y-auto whitespace-pre-wrap wrap-break-words">
@@ -12,40 +13,40 @@ const longTextCell = (value: string) => (
 export const columns: ColumnDef<Issue>[] = [
   {
     accessorKey: "issueID",
-    header: "Issue ID",
+    header: COLUMN_LABEL.issueID,
   },
   {
     accessorKey: "title",
-    header: "Title",
+    header: COLUMN_LABEL.title,
   },
   {
     accessorKey: "createdAt",
-    header: "Issue Date",
+    header: COLUMN_LABEL.createdAt,
   },
   {
     accessorKey: "team",
-    header: "Team",
+    header: COLUMN_LABEL.team,
   },
   {
     accessorKey: "category",
-    header: "Category",
+    header: COLUMN_LABEL.category,
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: COLUMN_LABEL.status,
   },
   {
     accessorKey: "description",
-    header: "Description",
+    header: COLUMN_LABEL.description,
     cell: ({ row }) => longTextCell(row.original.description),
   },
   {
     accessorKey: "resolutionStatus",
-    header: "Resolution",
+    header: COLUMN_LABEL.resolutionStatus,
     cell: ({ row }) => longTextCell(row.original.resolutionStatus),
   },
   {
     accessorKey: "completedAt",
-    header: "Completed At",
+    header: COLUMN_LABEL.completedAt,
   },
 ];

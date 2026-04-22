@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pie, PieChart } from "recharts";
+import { Label, Pie, PieChart } from "recharts";
 import {
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import { TEAM_COLOR_MAP, UI_LABEL } from "../app-config";
+import { UI_LABEL } from "../app-config";
+import { useTeamFilterQuery } from "../useTeamFilterQuery";
+import { getTeamMeta } from "../team";
 
 type ApiResponse = {
   fileName: string;
@@ -29,26 +29,29 @@ export const DonutChart = () => {
   const [chartData, setChartData] = useState<ChartRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
 
+  const query = useTeamFilterQuery();
+
   useEffect(() => {
     const fetchIssues = async () => {
-      const res = await fetch("/api/issues");
+      const res = await fetch(`/api/issues${query}`);
       const data: ApiResponse = await res.json();
       console.log("API response:", data);
-      const transformed = Object.entries(data.projectCounts).map(
-        ([name, value]) => ({
-          name,
-          value,
-          fill:
-            TEAM_COLOR_MAP[name as keyof typeof TEAM_COLOR_MAP] ??
-            "var(--muted)",
-        }),
+
+      const chartData = Object.entries(data.projectCounts).map(
+        ([csvName, value]) => {
+          const meta = getTeamMeta(csvName);
+          return {
+            name: meta?.label ?? csvName,
+            value,
+            fill: meta?.color ?? "var(--muted)",
+          };
+        },
       );
-      console.log("transformed: ", transformed);
-      setChartData(transformed);
+      setChartData(chartData);
       setTotalCount(data.totalCount);
     };
     fetchIssues();
-  }, []);
+  }, [query]);
 
   const chartConfig = Object.fromEntries(
     chartData.map((item) => [
@@ -77,33 +80,73 @@ export const DonutChart = () => {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
-                outerRadius={90}
+                innerRadius={36}
+                outerRadius={75}
                 strokeWidth={1}
-              />
-              <ChartLegend
-                content={
-                  <ChartLegendContent className="flex-col items-start gap-1" />
-                }
-                layout="vertical"
-                verticalAlign="middle"
-                align="right"
-                wrapperStyle={{
-                  right: 10,
+                labelLine={false}
+                label={({
+                  cx,
+                  cy,
+                  midAngle,
+                  innerRadius,
+                  outerRadius,
+                  value,
+                  name,
+                }) => {
+                  const RADIAN = Math.PI / 180;
+                  const safeMidAngle = midAngle ?? 0;
+                  const radius =
+                    innerRadius + (outerRadius - innerRadius) * 1.2;
+
+                  const x = cx + radius * Math.cos(-safeMidAngle * RADIAN);
+                  const y = cy + radius * Math.sin(-safeMidAngle * RADIAN);
+
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      fill="currentColor"
+                      textAnchor={x > cx ? "start" : "end"}
+                      dominantBaseline="central"
+                      className="text-xs"
+                    >
+                      {name}: {value}
+                    </text>
+                  );
                 }}
-              />
+              >
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-foreground text-3xl font-bold"
+                          >
+                            {totalCount}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 18}
+                            className="fill-muted-foreground text-xs"
+                          >
+                            {UI_LABEL.donut_chart.issueUnit}
+                          </tspan>
+                        </text>
+                      );
+                    }
+                  }}
+                />
+              </Pie>
             </PieChart>
           </ChartContainer>
-
-          {/* absolute overlay */}
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center -translate-x-5">
-            <div className="text-4xl font-bold text-foreground">
-              {totalCount}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {UI_LABEL.donut_chart.issueUnit}
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

@@ -4,7 +4,7 @@ import path from "path";
 import Papa from "papaparse";
 
 type IssueRow = {
-  IssueID: string;
+  issueID: string;
   createdAt: string;
   createdBy: string;
   title: string;
@@ -16,8 +16,13 @@ type IssueRow = {
   completedAt: string;
 };
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const teamsParam = searchParams.get("teams");
+
+    const selectedTeams = teamsParam ? teamsParam.split(",") : [];
+
     const csvDir = path.join(process.cwd(), "public", "csv");
 
     const files = await fs.readdir(csvDir);
@@ -46,16 +51,22 @@ export async function GET() {
 
     const rows = parsed.data;
 
+    // for filter
+    const filteredRows =
+      selectedTeams.length === 0
+        ? rows
+        : rows.filter((row) => selectedTeams.includes(row.team));
+
     const projectCounts: Record<string, number> = {};
 
-    rows.forEach((row) => {
-      const project = row["team"] || "not-set";
+    filteredRows.forEach((row) => {
+      const project = row.team || "not-set";
       projectCounts[project] = (projectCounts[project] ?? 0) + 1;
     });
 
     return NextResponse.json({
       fileName: latestFile,
-      totalCount: rows.length,
+      totalCount: filteredRows.length,
       projectCounts,
     });
   } catch (error) {
